@@ -1,7 +1,9 @@
-﻿using SchoolApp.Web.Scripts;
+﻿using SchoolApp.Web.Models;
+using SchoolApp.Web.Scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -19,7 +21,12 @@ namespace SchoolApp.Web.Controllers
         // GET: Book/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            Book book = _service.GetBookById(id);
+            if (book == null)
+            {
+                return HttpNotFound();
+            }
+            return View(book);
         }
 
         // GET: Book/Create

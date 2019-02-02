@@ -30,5 +30,25 @@ namespace SchoolApp.Web.Scripts
 
             return items;
         }
+
+        public Book GetBookById(int id)
+        {
+            string json = string.Empty;
+            string url = @"http://localhost:63894/api/Books/"+ id.ToString();
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.AutomaticDecompression = DecompressionMethods.GZip;
+
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            using (Stream stream = response.GetResponseStream())
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                json = reader.ReadToEnd();
+            }
+
+            Book item = JsonConvert.DeserializeObject<Book>(json);
+
+            return item;
+        }
     }
 }
