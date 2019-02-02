@@ -1,132 +1,104 @@
-﻿using SchoolApp.Server.Models;
-using System;
+﻿using SchoolApp.Server.IRepository;
+using SchoolApp.Server.Models.DataObject;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Net;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace SchoolApp.Server.Controllers
 {
     public class BooksController : ApiController
     {
-        private BookServiceContext db = new BookServiceContext();
+        private BookRepository repository = new BookRepository();
 
         // GET: api/Books
-        public IQueryable<Book> GetBooks()
+        public IEnumerable<Book> GetBooks()
         {
-            return db.Books.AsQueryable();
+            return repository.GetAll();
         }
 
-        //// GET: api/Books/5
-        //[ResponseType(typeof(BookDetailDTO))]
-        //public async Task<IHttpActionResult> GetBook(int id)
-        //{
-        //    var book = await db.Books.Include(b => b.Author).Select(b =>
-        //        new BookDetailDTO()
-        //        {
-        //            Id = b.Id,
-        //            Title = b.Title,
-        //            Year = b.Year,
-        //            Price = b.Price,
-        //            AuthorName = b.Author.Name,
-        //            Genre = b.Genre
-        //        }).SingleOrDefaultAsync(b => b.Id == id);
-        //    if (book == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return Ok(book);
-        //}
-
-        //// PUT: api/Books/5
-        //[ResponseType(typeof(void))]
-        //public async Task<IHttpActionResult> PutBook(int id, Book book)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    if (id != book.Id)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    db.Entry(book).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await db.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!BookExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return StatusCode(HttpStatusCode.NoContent);
-        //}
-
-        //// POST: api/Books
-        //[ResponseType(typeof(Book))]
-        //public async Task<IHttpActionResult> PostBook(Book book)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    db.Books.Add(book);
-        //    await db.SaveChangesAsync();
-
-        //    // Load author name
-        //    db.Entry(book).Reference(x => x.Author).Load();
-
-        //    var dto = new BookDTO()
-        //    {
-        //        Id = book.Id,
-        //        Title = book.Title,
-        //        AuthorName = book.Author.Name
-        //    };
-
-        //    return CreatedAtRoute("DefaultApi", new { id = book.Id }, dto);
-        //}
-
-        //// DELETE: api/Books/5
-        //[ResponseType(typeof(Book))]
-        //public async Task<IHttpActionResult> DeleteBook(int id)
-        //{
-        //    Book book = await db.Books.FindAsync(id);
-        //    if (book == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    db.Books.Remove(book);
-        //    await db.SaveChangesAsync();
-
-        //    return Ok(book);
-        //}
-
-        protected override void Dispose(bool disposing)
+        // GET: api/Books/5
+        [ResponseType(typeof(Book))]
+        public IHttpActionResult GetBook(int id)
         {
-            if (disposing)
+            var book = repository.GetByID(id);
+
+            //var book = await repository.GetAll().Include(b => b.Author).Select(b =>
+            //    new BookDetailDTO()
+            //    {
+            //        Id = b.Id,
+            //        Title = b.Title,
+            //        Year = b.Year,
+            //        Price = b.Price,
+            //        AuthorName = b.Author.Name,
+            //        Genre = b.Genre
+            //    }).SingleOrDefaultAsync(b => b.Id == id);
+            if (book == null)
             {
-                db.Dispose();
+                return NotFound();
             }
-            base.Dispose(disposing);
+
+            return Ok(book);
+        }
+
+        // PUT: api/Books/5
+        [ResponseType(typeof(void))]
+        public IHttpActionResult PutBook(int id, Book book)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != book.Id)
+            {
+                return BadRequest();
+            }
+
+            repository.Edit(book);
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        // POST: api/Books
+        [ResponseType(typeof(Book))]
+        public IHttpActionResult PostBook(Book book)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            repository.Add(book);
+
+            //var dto = new BookDTO()
+            //{
+            //    Id = book.Id,
+            //    Title = book.Title,
+            //    AuthorName = book.Author.Name
+            //};
+
+            return CreatedAtRoute("DefaultApi", new { id = book.Id }, book);
+        }
+
+        // DELETE: api/Books/5
+        [ResponseType(typeof(Book))]
+        public IHttpActionResult DeleteBook(int id)
+        {
+            Book book = repository.GetByID(id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            repository.Delete(book);
+
+            return Ok(book);
         }
 
         private bool BookExists(int id)
         {
-            return db.Books.Count(e => e.Id == id) > 0;
+            return repository.GetAll().Count(e => e.Id == id) > 0;
         }
     }
 }

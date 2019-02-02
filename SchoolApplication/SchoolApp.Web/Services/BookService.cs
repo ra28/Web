@@ -1,23 +1,19 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using SchoolApp.Web.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
-using System.Web.Mvc;
 
-namespace SchoolApp.Web.Controllers
+namespace SchoolApp.Web.Scripts
 {
-    public class HomeController : Controller
+    public class BookService
     {
-        public ActionResult Index()
+        public List<Book> GetListOfBooks()
         {
-            return View();
-        }
-
-        public ActionResult About()
-        {
-            string html = string.Empty;
+            string json = string.Empty;
             string url = @"http://localhost:63894/api/Books";
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -27,18 +23,12 @@ namespace SchoolApp.Web.Controllers
             using (Stream stream = response.GetResponseStream())
             using (StreamReader reader = new StreamReader(stream))
             {
-                html = reader.ReadToEnd();
+                json = reader.ReadToEnd();
             }
-            ViewBag.Message = html;
 
-            return View();
-        }
+            List<Book> items = JsonConvert.DeserializeObject<List<Book>>(json);
 
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            return items;
         }
     }
 }

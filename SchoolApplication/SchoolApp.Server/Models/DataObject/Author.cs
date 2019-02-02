@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace SchoolApp.Server.Models
+namespace SchoolApp.Server.Models.DataObject
 {
     public class Author
     {

@@ -1,10 +1,7 @@
 namespace SchoolApp.Server.Migrations
 {
-    using System;
-    using System.Data.Entity;
     using System.Data.Entity.Migrations;
-    using SchoolApp.Server.Models;
-    using System.Linq;
+    using SchoolApp.Server.Models.DataObject;
 
     internal sealed class Configuration : DbMigrationsConfiguration<SchoolApp.Server.Models.BookServiceContext>
     {
