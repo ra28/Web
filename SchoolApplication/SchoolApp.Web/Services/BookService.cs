@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Web;
 
 namespace SchoolApp.Web.Scripts
@@ -49,6 +50,32 @@ namespace SchoolApp.Web.Scripts
             Book item = JsonConvert.DeserializeObject<Book>(json);
 
             return item;
+        }
+
+        public string AddBook(Book book)
+        {
+            string url = @"http://localhost:63894/api/Books";
+
+            //var data = JsonConvert.SerializeObject(book);
+
+            byte[] dataBytes = Encoding.UTF8.GetBytes(book.ToString());
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+            request.ContentLength = dataBytes.Length;
+            request.Method = "POST";
+
+            using (Stream requestBody = request.GetRequestStream())
+            {
+                requestBody.Write(dataBytes, 0, dataBytes.Length);
+            }
+
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            using (Stream stream = response.GetResponseStream())
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
         }
     }
 }

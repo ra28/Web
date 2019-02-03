@@ -37,18 +37,23 @@ namespace SchoolApp.Web.Controllers
 
         // POST: Book/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind(Include = "Title, Year, Price, Genre, AuthorId")]Book book)
         {
             try
             {
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
+                if (ModelState.IsValid)
+                {
+                    _service.AddBook(book);
+                    return RedirectToAction("Index");
+                }
             }
-            catch
+            catch (System.Data.DataException /* dex */)
             {
-                return View();
+                //Log the error (uncomment dex variable name and add a line here to write a log.
+                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
+            return View(book);
         }
 
         // GET: Book/Edit/5

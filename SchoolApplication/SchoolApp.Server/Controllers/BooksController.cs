@@ -24,16 +24,6 @@ namespace SchoolApp.Server.Controllers
         {
             var book = repository.GetByID(id);
 
-            //var book = await repository.GetAll().Include(b => b.Author).Select(b =>
-            //    new BookDetailDTO()
-            //    {
-            //        Id = b.Id,
-            //        Title = b.Title,
-            //        Year = b.Year,
-            //        Price = b.Price,
-            //        AuthorName = b.Author.Name,
-            //        Genre = b.Genre
-            //    }).SingleOrDefaultAsync(b => b.Id == id);
             if (book == null)
             {
                 return NotFound();
@@ -69,14 +59,7 @@ namespace SchoolApp.Server.Controllers
                 return BadRequest(ModelState);
             }
 
-            repository.Add(book);
-
-            //var dto = new BookDTO()
-            //{
-            //    Id = book.Id,
-            //    Title = book.Title,
-            //    AuthorName = book.Author.Name
-            //};
+             repository.Add(book);
 
             return CreatedAtRoute("DefaultApi", new { id = book.Id }, book);
         }
