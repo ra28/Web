@@ -60,23 +60,40 @@ namespace SchoolApp.Web.Controllers
         // GET: Book/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            Book book = _service.GetBookById(id);
+            if (book == null)
+            {
+                return HttpNotFound();
+            }
+            return View(book);
         }
 
         // POST: Book/Edit/5
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, FormCollection collection)
         {
-            try
+            if (id == null)
             {
-                // TODO: Add update logic here
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Book bookToUpdate = _service.GetBookById(id);
+            if (TryUpdateModel(bookToUpdate, "",
+               new string[] { "Title", "Year", "Price", "Genre", "AuthorId" }))
+            {
+                try
+                {
+                    _service.EditBook(bookToUpdate);
 
-                return RedirectToAction("Index");
+                    return RedirectToAction("Index");
+                }
+                catch (DataException /* dex */)
+                {
+                    //Log the error (uncomment dex variable name and add a line here to write a log.
+                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
+                }
             }
-            catch
-            {
-                return View();
-            }
+            return View(bookToUpdate);
         }
 
         // GET: Book/Delete/5

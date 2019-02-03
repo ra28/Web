@@ -58,8 +58,10 @@ namespace SchoolApp.Server.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-             repository.Add(book);
+            if (!BookExists(book.Id))
+            {
+                repository.Add(book);
+            }
 
             return CreatedAtRoute("DefaultApi", new { id = book.Id }, book);
         }

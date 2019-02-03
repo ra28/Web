@@ -131,4 +131,3 @@ D:\ana\GIT\SchoolApplication\SchoolApp.Web\bin\Microsoft.AI.WindowsServer.xml
 D:\ana\GIT\SchoolApplication\SchoolApp.Web\bin\Microsoft.AI.Web.xml
 D:\ana\GIT\SchoolApplication\SchoolApp.Web\obj\Debug\SchoolApp.Web.dll
 D:\ana\GIT\SchoolApplication\SchoolApp.Web\obj\Debug\SchoolApp.Web.pdb
-D:\ana\GIT\SchoolApplication\SchoolApp.Web\obj\Debug\SchoolApp.Web.csprojResolveAssemblyReference.cache
