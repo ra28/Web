@@ -2,6 +2,7 @@
 using SchoolApp.Web.Scripts;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -79,25 +80,39 @@ namespace SchoolApp.Web.Controllers
         }
 
         // GET: Book/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int id, bool? saveChangesError = false)
         {
-            return View();
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            if (saveChangesError.GetValueOrDefault())
+            {
+                ViewBag.ErrorMessage = "Delete failed. Try again, and if the problem persists see your system administrator.";
+            }
+            Book book = _service.GetBookById(id);
+            if (book == null)
+            {
+                return HttpNotFound();
+            }
+            return View(book);
         }
 
         // POST: Book/Delete/5
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, FormCollection collection)
         {
             try
             {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
+                _service.DeleteBook(id);
             }
-            catch
+            catch (DataException/* dex */)
             {
-                return View();
+                //Log the error (uncomment dex variable name and add a line here to write a log.
+                return RedirectToAction("Delete", new { id = id, saveChangesError = true });
             }
+            return RedirectToAction("Index");
         }
     }
 }

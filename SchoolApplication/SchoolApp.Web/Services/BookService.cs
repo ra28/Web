@@ -66,7 +66,20 @@ namespace SchoolApp.Web.Scripts
                 return resultContent;
 
             }
+        }
 
+        public string DeleteBook(int id)
+        {
+            //var data = JsonConvert.SerializeObject(id);
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://localhost:63894/");
+                //var content = new StringContent(data, Encoding.UTF8, "application/json");
+                var result = client.DeleteAsync("/api/Books/"+id).Result;
+                string resultContent = result.Content.ReadAsStringAsync().Result;
+                return resultContent;
+
+            }
         }
     }
 }
