@@ -89,7 +89,7 @@ namespace SchoolApp.Web.Scripts
             {
                 client.BaseAddress = new Uri("http://localhost:63894/");
                 var content = new StringContent(data, Encoding.UTF8, "application/json");
-                var result = client.PutAsync("/api/Books",content).Result;
+                var result = client.PutAsync("/api/Books/" + book.Id ,content).Result;
                 string resultContent = result.Content.ReadAsStringAsync().Result;
                 return resultContent;
 
