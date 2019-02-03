@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace SchoolApp.Web.Scripts
@@ -54,28 +56,17 @@ namespace SchoolApp.Web.Scripts
 
         public string AddBook(Book book)
         {
-            string url = @"http://localhost:63894/api/Books";
-
-            //var data = JsonConvert.SerializeObject(book);
-
-            byte[] dataBytes = Encoding.UTF8.GetBytes(book.ToString());
-
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-            request.ContentLength = dataBytes.Length;
-            request.Method = "POST";
-
-            using (Stream requestBody = request.GetRequestStream())
+            var data = JsonConvert.SerializeObject(book);
+            using (var client = new HttpClient())
             {
-                requestBody.Write(dataBytes, 0, dataBytes.Length);
+                client.BaseAddress = new Uri("http://localhost:63894/");
+                var content = new StringContent(data, Encoding.UTF8, "application/json");
+                var result =  client.PostAsync("/api/Books", content).Result;
+                string resultContent = result.Content.ReadAsStringAsync().Result;
+                return resultContent;
+
             }
 
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            using (Stream stream = response.GetResponseStream())
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
         }
     }
 }
